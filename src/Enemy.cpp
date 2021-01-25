@@ -1,55 +1,57 @@
-#include "Player.h"
+#include "Enemy.h"
 #include "TextureManager.h"
 
-Player::Player(): m_currentAnimationState(PLAYER_IDLE_RIGHT)
+Enemy:: Enemy():m_currentAnimationState(ENEMY_IDLE_RIGHT)
 {
-	TextureManager::Instance()->loadSpriteSheet(
-		"../Assets/sprites/atlas.txt",
-		"../Assets/sprites/atlas.png", 
-		"spritesheet");
+	{
+		TextureManager::Instance()->loadSpriteSheet(
+			"../Assets/sprites/atlas.txt",
+			"../Assets/sprites/atlas.png",
+			"spritesheet");
 
-	setSpriteSheet(TextureManager::Instance()->getSpriteSheet("spritesheet"));
-	
-	// set frame width
-	setWidth(53);
+		setSpriteSheet(TextureManager::Instance()->getSpriteSheet("spritesheet"));
 
-	// set frame height
-	setHeight(58);
+		// set frame width
+		setWidth(53);
 
-	getTransform()->position = glm::vec2(400.0f, 300.0f);
-	getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
-	getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
-	getRigidBody()->isColliding = false;
-	setType(PLAYER);
+		// set frame height
+		setHeight(58);
 
-	m_buildAnimations();
+		getTransform()->position = glm::vec2(200.0f, 300.0f);
+		getRigidBody()->velocity = glm::vec2(0.0f, 0.0f);
+		getRigidBody()->acceleration = glm::vec2(0.0f, 0.0f);
+		getRigidBody()->isColliding = false;
+		setType(PLAYER);
+
+		m_buildAnimations();
+	}
 }
 
-Player::~Player()
-= default;
-
-void Player::draw()
+Enemy::~Enemy()
+{
+	
+}
+void Enemy::draw()
 {
 	// alias for x and y
 	const auto x = getTransform()->position.x;
 	const auto y = getTransform()->position.y;
-
-	// draw the player according to animation state
-	switch(m_currentAnimationState)
+	
+	switch (m_currentAnimationState)
 	{
-	case PLAYER_IDLE_RIGHT:
+	case ENEMY_IDLE_RIGHT:
 		TextureManager::Instance()->playAnimation("spritesheet", getAnimation("idle"),
 			x, y, 0.12f, 0, 255, true);
 		break;
-	case PLAYER_IDLE_LEFT:
+	case ENEMY_IDLE_LEFT:
 		TextureManager::Instance()->playAnimation("spritesheet", getAnimation("idle"),
 			x, y, 0.12f, 0, 255, true, SDL_FLIP_HORIZONTAL);
 		break;
-	case PLAYER_RUN_RIGHT:
+	case ENEMY_RUN_RIGHT:
 		TextureManager::Instance()->playAnimation("spritesheet", getAnimation("run"),
 			x, y, 0.25f, 0, 255, true);
 		break;
-	case PLAYER_RUN_LEFT:
+	case ENEMY_RUN_LEFT:
 		TextureManager::Instance()->playAnimation("spritesheet", getAnimation("run"),
 			x, y, 0.25f, 0, 255, true, SDL_FLIP_HORIZONTAL);
 		break;
@@ -59,39 +61,39 @@ void Player::draw()
 
 		break;
 	}
-	
 }
 
-void Player::update()
+void Enemy::update()
 {
-	if (m_currentAnimationState == PLAYER_RUN_RIGHT)
+	if (m_currentAnimationState == ENEMY_RUN_RIGHT)
 	{
 		getTransform()->position += glm::vec2(5.0f, 0.0f);
 	}
-	if (m_currentAnimationState == PLAYER_RUN_LEFT)
+	if (m_currentAnimationState == ENEMY_RUN_LEFT)
 	{
 		getTransform()->position += glm::vec2(-5.0f, 0.0f);
 	}
-	if (m_currentAnimationState == PLAYER_RUN_UP)
+	if (m_currentAnimationState == ENEMY_RUN_UP)
 	{
 		getTransform()->position += glm::vec2(0.0f, -5.0f);
 	}
-	if (m_currentAnimationState == PLAYER_RUN_DOWN)
+	if (m_currentAnimationState == ENEMY_RUN_DOWN)
 	{
-		getTransform()->position += glm::vec2(0.0f,5.0f);
+		getTransform()->position += glm::vec2(0.0f, 5.0f);
 	}
 }
 
-void Player::clean()
+void Enemy::clean()
 {
+	
 }
 
-void Player::setAnimationState(const PlayerAnimationState new_state)
+void Enemy::setAnimationState(const EnemyAnimationState new_state)
 {
 	m_currentAnimationState = new_state;
 }
 
-void Player::m_buildAnimations()
+void Enemy::m_buildAnimations()
 {
 	Animation idleAnimation = Animation();
 

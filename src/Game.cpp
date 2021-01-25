@@ -103,7 +103,7 @@ void Game::start()
 {
 	m_currentSceneState = NO_SCENE;
 
-	//TODO: temporarily commented out
+	//TODO Dont forget to uncommend
 	//changeSceneState(START_SCENE);
 	changeSceneState(PLAY_SCENE);
 }

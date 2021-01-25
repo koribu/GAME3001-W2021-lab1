@@ -41,38 +41,32 @@ void PlayScene::handleEvents()
 {
 	EventManager::Instance().update();
 
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_ESCAPE))
-	{
-		TheGame::Instance()->quit();
-	}
-
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_1))
-	{
-		TheGame::Instance()->changeSceneState(START_SCENE);
-	}
-
-	if (EventManager::Instance().isKeyDown(SDL_SCANCODE_2))
-	{
-		TheGame::Instance()->changeSceneState(END_SCENE);
-	}
 }
 
 void PlayScene::start()
 {
 	// Set GUI Title
 	m_guiTitle = "Play Scene";
-
 	
 	m_pTarget = new Target();
-	m_pTarget->getTransform()->position = glm::vec2(400.0f, 300.0f);
+	m_pTarget->getTransform()->position = glm::vec2(400, 300);
 	addChild(m_pTarget);
-
-	// instantiating spaceship
+	
+	//Space ship sprite
 	m_pSpaceShip = new SpaceShip();
-	m_pSpaceShip->getTransform()->position = glm::vec2(100.0f, 100.0f);
+	m_pSpaceShip->getTransform()->position = glm::vec2(100, 100);
+	addChild(m_pSpaceShip);
 	m_pSpaceShip->setEnabled(false);
 	m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
-	addChild(m_pSpaceShip);
+	
+
+	/* Instructions Label */
+	m_pInstructionsLabel = new Label("Press the backtick (`) character to toggle Debug View", "Consolas");
+	m_pInstructionsLabel->getTransform()->position = glm::vec2(Config::SCREEN_WIDTH * 0.5f, 500.0f);
+
+	//addChild(m_pInstructionsLabel);
+
+	
 }
 
 void PlayScene::GUI_Function() const
@@ -85,40 +79,37 @@ void PlayScene::GUI_Function() const
 	
 	ImGui::Begin("Your Window Title Goes Here", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_MenuBar);
 
-	static float speed = 10.0f;
-	if(ImGui::SliderFloat("MaxSpeed", &speed, 0.0f, 100.0f))
+	static float angleInRad = m_pSpaceShip->getAngle();
+	if(ImGui::SliderAngle("Direction Angle",&angleInRad))
+	{
+		m_pSpaceShip->setAngle(angleInRad * Util::Rad2Deg);
+	}
+	static float speed = 5.0f;
+	if(ImGui::SliderFloat("Max Speed", &speed, 0.0f, 100.0f))
 	{
 		m_pSpaceShip->setMaxSpeed(speed);
 	}
-
-	static float angleInRadians = m_pSpaceShip->getRotation();
-	if(ImGui::SliderAngle("Orientation Angle", &angleInRadians))
-	{
-		m_pSpaceShip->setRotation(angleInRadians * Util::Rad2Deg);
-	}
-	
 	if(ImGui::Button("Start"))
 	{
 		m_pSpaceShip->setEnabled(true);
 	}
 
-	ImGui::SameLine();
-	
+	ImGui::SameLine(100.0f);
+
 	if (ImGui::Button("Reset"))
 	{
-		m_pSpaceShip->getTransform()->position = glm::vec2(100.0f, 100.0f);
 		m_pSpaceShip->setEnabled(false);
+		m_pSpaceShip->getTransform()->position = glm::vec2(100, 100);
 	}
-
 	ImGui::Separator();
 
-	static float targetPosition[2] = { m_pTarget->getTransform()->position.x, m_pTarget->getTransform()->position.y};
-	if(ImGui::SliderFloat2("Target", targetPosition, 0.0f, 800.0f))
+	static float targetPos[2] = { m_pTarget->getTransform()->position.x, m_pTarget->getTransform()->position.y };
+	if(ImGui::SliderFloat2("Target", targetPos, 0.0f, 800.0f))
 	{
-		m_pTarget->getTransform()->position = glm::vec2(targetPosition[0], targetPosition[1]);
+		m_pTarget->getTransform()->position = glm::vec2(targetPos[0], targetPos[1]);
 		m_pSpaceShip->setDestination(m_pTarget->getTransform()->position);
 	}
-
+	
 	ImGui::End();
 
 	// Don't Remove this
